@@ -7,6 +7,9 @@ const router = Router()
 router.get('/', postControllers.getAllPosts)
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.get('/query', postControllers.getPostsByQuery)
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get('/:id', postControllers.getPostById)
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
