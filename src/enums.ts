@@ -3,3 +3,9 @@ export enum Category {
   Hope = 'hope',
   Faith = 'faith'
 }
+
+export enum Role {
+  Reader = 'reader',
+  Writer = 'writer',
+  Admin = 'admin'
+}
