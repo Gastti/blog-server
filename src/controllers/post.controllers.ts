@@ -5,15 +5,15 @@ export const getAllPosts = async (_req: Request, res: Response): Promise<void> =
   try {
     const posts = await postServices.getAllPosts()
 
-    if (posts == null) {
-      res.status(404).send({
-        status: 404,
-        data: []
-      })
-    } else {
+    if (posts !== null) {
       res.status(200).send({
         status: 200,
         data: posts
+      })
+    } else {
+      res.status(404).send({
+        status: 404,
+        message: 'Bad request or inexistent record.'
       })
     }
   } catch (error) {
@@ -28,15 +28,15 @@ export const getPostsByQuery = async (req: Request, res: Response): Promise<void
   try {
     const posts = await postServices.getPostsByQuery(req.query)
 
-    if (posts == null) {
-      res.status(404).send({
-        status: 404,
-        data: []
-      })
-    } else {
+    if (posts !== null) {
       res.status(200).send({
         status: 200,
         data: posts
+      })
+    } else {
+      res.status(404).send({
+        status: 404,
+        message: 'Bad request or inexistent record.'
       })
     }
   } catch (error) {
@@ -52,15 +52,15 @@ export const getPostById = async (req: Request, res: Response): Promise<void> =>
     const { id } = req.params
     const post = await postServices.getPostById(id)
 
-    if (post == null) {
-      res.status(404).send({
-        status: 404,
-        data: []
-      })
-    } else {
+    if (post !== null) {
       res.status(200).send({
         status: 200,
-        data: post
+        post
+      })
+    } else {
+      res.status(404).send({
+        status: 404,
+        message: 'Bad request or inexistent record.'
       })
     }
   } catch (error) {
@@ -110,7 +110,7 @@ export const editPost = async (req: Request, res: Response): Promise<void> => {
     } else {
       res.status(404).send({
         status: 404,
-        data: post
+        message: 'Bad request or inexistent record.'
       })
     }
   } catch (error) {
@@ -118,5 +118,26 @@ export const editPost = async (req: Request, res: Response): Promise<void> => {
       status: 500,
       data: error
     })
+  }
+}
+
+export const deletePost = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params
+    const post = await postServices.deletePost(id)
+
+    if (post !== null) {
+      res.status(200).send({
+        status: 200,
+        data: post
+      })
+    } else {
+      res.status(404).send({
+        status: 404,
+        message: 'Bad request or inexistent record.'
+      })
+    }
+  } catch (error) {
+
   }
 }

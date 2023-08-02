@@ -53,4 +53,15 @@ router.put('/:id', [
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 postControllers.editPost)
 
+router.delete('/:id', [
+  param('id')
+    .notEmpty().withMessage('Required field.')
+    .isMongoId().withMessage('Must be a valid mongo id.')
+    .isString().withMessage('Must be a string.')
+    .trim().escape(),
+  validateFields
+],
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+postControllers.deletePost)
+
 export default router

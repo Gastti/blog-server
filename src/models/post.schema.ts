@@ -8,7 +8,8 @@ const PostSchema: Schema = new Schema(
     content: { type: String },
     category: { type: String },
     tags: { type: [String] },
-    url: { type: String }
+    url: { type: String },
+    isDeleted: { type: Boolean, default: false }
   },
   {
     timestamps: true
