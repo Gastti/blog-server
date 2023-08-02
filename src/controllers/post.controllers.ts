@@ -5,10 +5,17 @@ export const getAllPosts = async (_req: Request, res: Response): Promise<void> =
   try {
     const posts = await postServices.getAllPosts()
 
-    res.status(200).send({
-      status: 200,
-      data: posts
-    })
+    if (posts == null) {
+      res.status(404).send({
+        status: 404,
+        data: []
+      })
+    } else {
+      res.status(200).send({
+        status: 200,
+        data: posts
+      })
+    }
   } catch (error) {
     res.status(400).send({
       status: 500,
@@ -21,12 +28,19 @@ export const getPostsByQuery = async (req: Request, res: Response): Promise<void
   try {
     const posts = await postServices.getPostsByQuery(req.query)
 
-    res.status(200).send({
-      status: 200,
-      data: posts
-    })
+    if (posts == null) {
+      res.status(404).send({
+        status: 404,
+        data: []
+      })
+    } else {
+      res.status(200).send({
+        status: 200,
+        data: posts
+      })
+    }
   } catch (error) {
-    res.status(400).send({
+    res.status(500).send({
       status: 500,
       data: error
     })
@@ -38,10 +52,17 @@ export const getPostById = async (req: Request, res: Response): Promise<void> =>
     const { id } = req.params
     const post = await postServices.getPostById(id)
 
-    res.status(200).send({
-      status: 200,
-      data: post
-    })
+    if (post == null) {
+      res.status(404).send({
+        status: 404,
+        data: []
+      })
+    } else {
+      res.status(200).send({
+        status: 200,
+        data: post
+      })
+    }
   } catch (error) {
     res.status(400).send({
       status: 500,

@@ -1,54 +1,65 @@
 import { PostModel } from '../models/post.schema'
 import { IPost, NewPostEntry } from '../types'
 
-export const getAllPosts = async (): Promise<IPost[] | undefined> => {
+export const getAllPosts = async (): Promise<IPost[] | null> => {
   try {
-    const posts = await PostModel.find()
+    const posts: IPost[] = await PostModel.find()
+
+    if (posts == null) return null
+
     return posts
   } catch (error) {
     console.log('Error in post.services.ts', error)
-    return undefined
+    return null
   }
 }
 
-export const getPostsByQuery = async (queryParams: any): Promise<IPost[] | undefined> => {
+export const getPostsByQuery = async (queryParams: any): Promise<IPost[] | null> => {
   try {
-    console.log(queryParams)
-    const { title, tag } = queryParams
-    if (title.length !== 0) {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const posts = await PostModel.find({ title: `/${title}/i` })
-      return posts
+    const tag: string = queryParams.tag ?? ''
+    const title: string = queryParams.title ?? ''
+
+    if (title !== null && title.length > 0) {
+      const posts: IPost[] = await PostModel.find({
+        title: { $regex: new RegExp(title, 'i') }
+      })
+      if (posts.length > 0) return posts
     }
 
-    if (tag.length !== 0) {
-      const posts = await PostModel.find()
-      return posts
+    if (tag !== null && tag.length > 0) {
+      const lowerCasedTag = tag.toLowerCase()
+      const posts = await PostModel.find({
+        tags: { $in: [lowerCasedTag] }
+      })
+      if (posts.length > 0) return posts
     }
 
-    return []
+    return null
   } catch (error) {
     console.log('Error in post.services.ts', error)
-    return undefined
+    return null
   }
 }
 
-export const getPostById = async (id: string): Promise<IPost | null | undefined> => {
+export const getPostById = async (id: string): Promise<IPost | null> => {
   try {
-    const post = await PostModel.findById(id)
+    const post: IPost | null = await PostModel.findById(id)
+
+    if (post == null) return null
+
     return post
   } catch (error) {
-    console.log('Error in post.services.ts', error)
-    return undefined
+    console.log('Error in post.services.ts - getPostById', error)
+    return null
   }
 }
 
-export const addPost = async (newPostEntry: NewPostEntry): Promise<IPost | undefined> => {
+export const addPost = async (newPostEntry: NewPostEntry): Promise<IPost | null> => {
   try {
     const post = await PostModel.create(newPostEntry)
     return post
   } catch (error) {
     console.log('Error in post.services.ts', error)
-    return undefined
+    return null
   }
 }
