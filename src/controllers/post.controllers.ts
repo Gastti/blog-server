@@ -96,3 +96,27 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
     })
   }
 }
+
+export const editPost = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params
+    const post = await postServices.editPost(id, req.body)
+
+    if (post !== null) {
+      res.status(200).send({
+        status: 200,
+        data: post
+      })
+    } else {
+      res.status(404).send({
+        status: 404,
+        data: post
+      })
+    }
+  } catch (error) {
+    res.status(400).send({
+      status: 500,
+      data: error
+    })
+  }
+}

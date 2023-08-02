@@ -63,3 +63,13 @@ export const addPost = async (newPostEntry: NewPostEntry): Promise<IPost | null>
     return null
   }
 }
+
+export const editPost = async (postId: string, updatedData: NewPostEntry): Promise<IPost | null> => {
+  try {
+    const post = await PostModel.findOneAndUpdate({ _id: postId }, updatedData, { new: true })
+    return post
+  } catch (error) {
+    console.log('Error in post.services.ts - editPost', error)
+    return null
+  }
+}
