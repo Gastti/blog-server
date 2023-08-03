@@ -7,18 +7,16 @@ import * as permissions from '../middlewares/permissions'
 
 const router = Router()
 
-router.get('/', [
-  isAuthenticated,
-  permissions.isWriter,
-  validateFields
-],
+// List all posts endpoint
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-postControllers.getAllPosts)
+router.get('/', postControllers.getAllPosts)
 
+// List post by query endpoint
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get('/find', postControllers.getPostsByQuery)
 
-router.get('/:id', [
+// List post by id endpoint
+router.get('/find/:id', [
   param('id')
     .isString().withMessage('Must be a string.')
     .isMongoId().withMessage('Must be a valid mongo id.')
@@ -27,6 +25,26 @@ router.get('/:id', [
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 postControllers.getPostById)
 
+// List own posts endpoint
+router.get('/me', [
+  isAuthenticated,
+  permissions.isWriter,
+  validateFields
+],
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+postControllers.getMyPosts)
+
+// List post by author endpoint
+router.get('/author/:id', [
+  param('id')
+    .isString().withMessage('Must be a string.')
+    .isMongoId().withMessage('Must be a valid mongo id.')
+    .trim().escape()
+],
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+postControllers.getMyPosts)
+
+// Create a new post endpoint
 router.post('/', [
   check(['title', 'category', 'content'])
     .notEmpty().withMessage('Required field.')
@@ -43,6 +61,7 @@ router.post('/', [
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 postControllers.addPost)
 
+// Edit post endpoint
 router.put('/:id', [
   param('id')
     .notEmpty().withMessage('Required field.')
@@ -58,12 +77,13 @@ router.put('/:id', [
     .isArray().withMessage('Must be an array.')
     .trim().escape(),
   isAuthenticated,
-  permissions.isPostAutor,
+  permissions.isPostAuthor,
   validateFields
 ],
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 postControllers.editPost)
 
+// Delete post endpoint
 router.delete('/:id', [
   param('id')
     .notEmpty().withMessage('Required field.')
@@ -71,7 +91,7 @@ router.delete('/:id', [
     .isString().withMessage('Must be a string.')
     .trim().escape(),
   isAuthenticated,
-  permissions.isPostAutor,
+  permissions.isPostAuthor,
   validateFields
 ],
 // eslint-disable-next-line @typescript-eslint/no-misused-promises

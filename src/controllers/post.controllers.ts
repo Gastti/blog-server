@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import * as postServices from '../services/post.services'
+import { Error } from '../enums'
 
 export const getAllPosts = async (_req: Request, res: Response): Promise<void> => {
   try {
@@ -61,6 +62,52 @@ export const getPostById = async (req: Request, res: Response): Promise<void> =>
       res.status(404).send({
         status: 404,
         message: 'Bad request or inexistent record.'
+      })
+    }
+  } catch (error) {
+    res.status(500).send({
+      status: 500,
+      data: error
+    })
+  }
+}
+
+export const getMyPosts = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.authenticatedUser
+    const response = await postServices.getPostByAuthor(userId)
+    if (response === Error.INTERNAL_ERROR) {
+      res.status(404).send({
+        status: 404,
+        message: 'Bad request.'
+      })
+    } else {
+      res.status(200).send({
+        status: 200,
+        data: response
+      })
+    }
+  } catch (error) {
+    res.status(500).send({
+      status: 500,
+      data: error
+    })
+  }
+}
+
+export const getPostsByAuthor = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params
+    const response = await postServices.getPostByAuthor(id)
+    if (response === Error.INTERNAL_ERROR) {
+      res.status(404).send({
+        status: 404,
+        message: 'Bad request.'
+      })
+    } else {
+      res.status(200).send({
+        status: 200,
+        data: response
       })
     }
   } catch (error) {

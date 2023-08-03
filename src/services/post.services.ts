@@ -1,3 +1,4 @@
+import { Error } from '../enums'
 import { PostModel } from '../models/post.schema'
 import { IPost, NewPostEntry } from '../types'
 
@@ -61,6 +62,18 @@ export const getPostById = async (postId: string): Promise<IPost | null> => {
   } catch (error) {
     console.log('Error in post.services.ts - getPostById', error)
     return null
+  }
+}
+
+export const getPostByAuthor = async (userId: string): Promise<IPost[] | Error> => {
+  try {
+    const posts = await PostModel.find({ userId })
+    console.log('000000')
+    console.log(posts)
+    return posts
+  } catch (error) {
+    console.log('Error in post.services.ts - getPostById', error)
+    return Error.INTERNAL_ERROR
   }
 }
 
