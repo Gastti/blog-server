@@ -17,7 +17,7 @@ export const getAllPosts = async (_req: Request, res: Response): Promise<void> =
       })
     }
   } catch (error) {
-    res.status(400).send({
+    res.status(500).send({
       status: 500,
       data: error
     })
@@ -64,7 +64,7 @@ export const getPostById = async (req: Request, res: Response): Promise<void> =>
       })
     }
   } catch (error) {
-    res.status(400).send({
+    res.status(500).send({
       status: 500,
       data: error
     })
@@ -74,6 +74,7 @@ export const getPostById = async (req: Request, res: Response): Promise<void> =>
 export const addPost = async (req: Request, res: Response): Promise<void> => {
   try {
     const { title, content, category, tags } = req.body
+    const { userId } = req.authenticatedUser
     const url = req.body.title.toLowerCase().split(' ').join('-')
 
     const newPost = {
@@ -81,7 +82,8 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
       title,
       content,
       category,
-      tags
+      tags,
+      userId
     }
 
     const post = await postServices.addPost(newPost)
@@ -90,9 +92,10 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
       data: post
     })
   } catch (error) {
+    console.log(error)
     res.status(400).send({
       status: 500,
-      data: error
+      message: 'Internal error, contact an admin.'
     })
   }
 }
@@ -114,7 +117,7 @@ export const editPost = async (req: Request, res: Response): Promise<void> => {
       })
     }
   } catch (error) {
-    res.status(400).send({
+    res.status(500).send({
       status: 500,
       data: error
     })
@@ -138,6 +141,9 @@ export const deletePost = async (req: Request, res: Response): Promise<void> => 
       })
     }
   } catch (error) {
-
+    res.status(500).send({
+      status: 500,
+      data: error
+    })
   }
 }

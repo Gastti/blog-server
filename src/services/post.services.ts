@@ -3,7 +3,7 @@ import { IPost, NewPostEntry } from '../types'
 
 export const getAllPosts = async (): Promise<IPost[] | null> => {
   try {
-    const posts: IPost[] = await PostModel.find({ isDeleted: false }).exec()
+    const posts: IPost[] = await PostModel.find({ isDeleted: false })
 
     if (posts == null) return null
 

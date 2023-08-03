@@ -3,7 +3,7 @@ import { IPost } from '../types'
 
 const PostSchema: Schema = new Schema(
   {
-    user_id: { type: Number },
+    userId: { type: String },
     title: { type: String },
     content: { type: String },
     category: { type: String },

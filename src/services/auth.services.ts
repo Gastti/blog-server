@@ -1,6 +1,6 @@
 import { Role, Error } from '../enums'
 import { UserModel } from '../models/user.schema'
-import { IUser, UserCredentials, NewUserEntry } from '../types'
+import { IUser, UserCredentials, NewUserEntry, ITokenPayload } from '../types'
 import bcryptjs from 'bcryptjs'
 
 export const signUp = async (newUserEntry: NewUserEntry): Promise<IUser | Error> => {
@@ -38,7 +38,7 @@ export const signUp = async (newUserEntry: NewUserEntry): Promise<IUser | Error>
   }
 }
 
-export const signIn = async (loginData: UserCredentials): Promise<string | Error> => {
+export const signIn = async (loginData: UserCredentials): Promise<ITokenPayload | Error> => {
   try {
     const { email, password } = loginData
     const user = await UserModel.findOne({ email })
@@ -49,8 +49,13 @@ export const signIn = async (loginData: UserCredentials): Promise<string | Error
     if (!checkPassword) return Error.WRONG_CREDENTIALS
 
     const userId: string = user._id.toString()
+    const userRole: string = user.role
+    const tokenPayload: ITokenPayload = {
+      userId,
+      userRole
+    }
 
-    return userId
+    return tokenPayload
   } catch (error) {
     console.log('Error in auth.services.ts - signIn', error)
     return Error.BAD_REQUEST

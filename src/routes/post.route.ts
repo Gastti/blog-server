@@ -2,11 +2,18 @@ import { Router } from 'express'
 import { check, param } from 'express-validator'
 import * as postControllers from '../controllers/post.controllers'
 import { validateFields } from '../middlewares/validate'
+import { isAuthenticated } from '../middlewares/isAuthenticated'
+import * as permissions from '../middlewares/permissions'
 
 const router = Router()
 
+router.get('/', [
+  isAuthenticated,
+  permissions.isWriter,
+  validateFields
+],
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.get('/', postControllers.getAllPosts)
+postControllers.getAllPosts)
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get('/find', postControllers.getPostsByQuery)
@@ -29,6 +36,8 @@ router.post('/', [
     .notEmpty().withMessage('Required field.')
     .isArray().withMessage('Must be an array.')
     .trim().escape(),
+  isAuthenticated,
+  permissions.isWriter,
   validateFields
 ],
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -41,13 +50,15 @@ router.put('/:id', [
     .isString().withMessage('Must be a string.')
     .trim().escape(),
   check(['title', 'category', 'content'])
-    .notEmpty().withMessage('Required field.')
+    .optional()
     .isString().withMessage('Must be type string.')
     .trim().escape(),
   check('tags')
-    .notEmpty().withMessage('Required field.')
+    .optional()
     .isArray().withMessage('Must be an array.')
     .trim().escape(),
+  isAuthenticated,
+  permissions.isPostAutor,
   validateFields
 ],
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -59,6 +70,8 @@ router.delete('/:id', [
     .isMongoId().withMessage('Must be a valid mongo id.')
     .isString().withMessage('Must be a string.')
     .trim().escape(),
+  isAuthenticated,
+  permissions.isPostAutor,
   validateFields
 ],
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
