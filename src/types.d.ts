@@ -11,15 +11,6 @@ declare global {
   }
 }
 
-export interface IPost {
-  userId: string
-  title: string
-  content: string
-  category: Category
-  url: string
-  tags: string[]
-}
-
 export interface IUser {
   username: string
   firstname: string
@@ -29,6 +20,22 @@ export interface IUser {
   avatar: string
   contact_url: string
   role: Role
+}
+
+export interface IPost {
+  userId: string
+  title: string
+  content: string
+  category: Category
+  url: string
+  tags: string[]
+  isDeleted: boolean
+}
+
+export interface IComment {
+  autorId: string
+  content: string
+  isDeleted: boolean
 }
 
 export interface ITokenData {
