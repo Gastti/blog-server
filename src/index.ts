@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
+import authRouter from './routes/auth.route'
 import postRouter from './routes/post.route'
 import dbInit from './database/mongo'
 
@@ -9,6 +10,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/posts', postRouter)
 
 dbInit()

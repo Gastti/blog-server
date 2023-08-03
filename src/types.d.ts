@@ -22,3 +22,5 @@ export interface IUser {
 
 export type NonSensitiveInfoPostEntry = Omit<IPost, 'user_id'>
 export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url'>
+export type NewUserEntry = Omit<IUser, 'rol' | 'contact_url' | 'avatar'>
+export type UserCredentials = Omit<IUser, 'rol' | 'contact_url' | 'avatar' | 'firstname' | 'lastname' | 'username'>
