@@ -46,7 +46,7 @@ export interface ITokenData {
 }
 
 export type NonSensitiveInfoPostEntry = Omit<IPost, 'user_id'>
-export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url'>
-export type NewUserEntry = Omit<IUser, 'role' | 'contact_url' | 'avatar'>
-export type UserCredentials = Omit<IUser, 'role' | 'contact_url' | 'avatar' | 'firstname' | 'lastname' | 'username'>
+export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted'>
+export type NewUserEntry = Omit<IUser, 'role' | 'contact_url' | 'avatar' | 'isDeleted'>
+export type UserCredentials = Omit<IUser, 'role' | 'contact_url' | 'avatar' | 'firstname' | 'lastname' | 'username' | 'isDeleted'>
 export type ITokenPayload = Omit<ITokenData, 'iat' | 'exp'>
