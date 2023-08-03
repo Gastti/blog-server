@@ -33,7 +33,7 @@ export interface IPost {
 }
 
 export interface IComment {
-  autorId: string
+  authorId: string
   content: string
   isDeleted: boolean
 }
