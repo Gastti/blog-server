@@ -42,7 +42,7 @@ export async function isWriter (req: Request, res: Response, next: NextFunction)
   }
 }
 
-export async function isPostAutor (req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function isPostAuthor (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { userId, userRole } = req.authenticatedUser
     const { id } = req.params
