@@ -1,24 +1,12 @@
 import { Request, Response } from 'express'
 import * as commentServices from '../services/comment.services'
-import { Error } from '../enums'
 import { NewCommentEntry } from '../types'
-// import { sendResponse } from '../utils/response.utils'
+import { sendResponse } from '../utils/response.utils'
 
 export const getAllComments = async (_req: Request, res: Response): Promise<void> => {
   try {
     const response = await commentServices.getAllComments()
-    // sendResponse(res, response)
-    if (response === Error.BAD_REQUEST) {
-      res.status(404).send({
-        status: 404,
-        message: 'Bad Request.'
-      })
-    } else {
-      res.status(200).send({
-        status: 200,
-        data: response
-      })
-    }
+    sendResponse(res, response)
   } catch (error) {
     console.log(error)
     res.status(500).send({
@@ -31,19 +19,9 @@ export const getAllComments = async (_req: Request, res: Response): Promise<void
 export const getCommentsByPost = async (req: Request, res: Response): Promise<void> => {
   try {
     const { postId } = req.params
-    const response = await commentServices.getCommentsByPost(postId)
 
-    if (response === Error.BAD_REQUEST) {
-      res.status(404).send({
-        status: 404,
-        message: 'Bad Request.'
-      })
-    } else {
-      res.status(200).send({
-        status: 200,
-        data: response
-      })
-    }
+    const response = await commentServices.getCommentsByPost(postId)
+    sendResponse(res, response)
   } catch (error) {
     console.log(error)
     res.status(500).send({
@@ -64,19 +42,37 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
       postId
     }
 
-    const response = await commentServices.addComent(commentData)
+    const response = await commentServices.addComment(commentData)
+    sendResponse(res, response)
+  } catch (error) {
+    console.log(error)
+    res.status(500).send({
+      status: 500,
+      message: 'Internal error, try again or contact an admin.'
+    })
+  }
+}
 
-    if (response === Error.BAD_REQUEST) {
-      res.status(404).send({
-        status: 404,
-        message: 'Bad request.'
-      })
-    } else {
-      res.status(200).send({
-        status: 200,
-        data: response
-      })
-    }
+export const editComment = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { commentId } = req.params
+    const { content } = req.body
+    const response = await commentServices.editComment(commentId, content)
+    sendResponse(res, response)
+  } catch (error) {
+    console.log(error)
+    res.status(500).send({
+      status: 500,
+      message: 'Internal error, try again or contact an admin.'
+    })
+  }
+}
+
+export const deleteComment = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { commentId } = req.params
+    const response = await commentServices.deleteComment(commentId)
+    sendResponse(res, response)
   } catch (error) {
     console.log(error)
     res.status(500).send({

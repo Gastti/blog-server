@@ -24,13 +24,46 @@ export const getCommentsByPost = async (postId: string): Promise<IComment[] | Er
   }
 }
 
-export const addComent = async (commentData: NewCommentEntry): Promise<IComment | Error> => {
+export const addComment = async (commentData: NewCommentEntry): Promise<IComment | Error> => {
   try {
     const comment = await CommentModel.create(commentData)
     if (comment !== null) return comment
     else return Error.BAD_REQUEST
   } catch (error) {
     console.log('Error in comment.services.ts - addComment', error)
+    return Error.BAD_REQUEST
+  }
+}
+
+export const editComment = async (commentId: string, content: string): Promise<IComment | Error> => {
+  try {
+    const comment = await CommentModel.findOneAndUpdate({
+      $and: [
+        { _id: commentId },
+        { isDeleted: false }
+      ]
+    }, { content }, { new: true })
+
+    if (comment !== null) return comment
+    else return Error.EMPTY_RESPONSE
+  } catch (error) {
+    console.log('Error in comment.services.ts - editComment', error)
+    return Error.BAD_REQUEST
+  }
+}
+
+export const deleteComment = async (commentId: string): Promise<IComment | Error> => {
+  try {
+    const comment = await CommentModel.findOneAndUpdate({
+      $and: [
+        { _id: commentId },
+        { isDeleted: false }
+      ]
+    }, { isDeleted: true }, { new: true })
+    if (comment !== null) return comment
+    else return Error.EMPTY_RESPONSE
+  } catch (error) {
+    console.log('Error in comment.services.ts - deleteComment', error)
     return Error.BAD_REQUEST
   }
 }
