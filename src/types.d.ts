@@ -34,6 +34,7 @@ export interface IPost {
 
 export interface IComment {
   authorId: string
+  postId: string
   content: string
   isDeleted: boolean
 }
@@ -46,7 +47,11 @@ export interface ITokenData {
 }
 
 export type NonSensitiveInfoPostEntry = Omit<IPost, 'user_id'>
+
 export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted'>
 export type NewUserEntry = Omit<IUser, 'role' | 'contact_url' | 'avatar' | 'isDeleted'>
+export type NewCommentEntry = Omit<IComment, 'isDeleted' >
+
 export type UserCredentials = Omit<IUser, 'role' | 'contact_url' | 'avatar' | 'firstname' | 'lastname' | 'username' | 'isDeleted'>
+
 export type ITokenPayload = Omit<ITokenData, 'iat' | 'exp'>

@@ -51,7 +51,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
         status: 404,
         message: 'Bad request.'
       })
-    } else if (session !== Error.EXISTING_RECORD && session !== Error.INTERNAL_ERROR) {
+    } else if (session !== Error.EXISTING_RECORD && session !== Error.INTERNAL_ERROR && session !== Error.EMPTY_RESPONSE) {
       const token = await generateToken(session)
       res.status(200).send({
         status: 200,

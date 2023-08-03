@@ -11,6 +11,7 @@ export enum Role {
 }
 
 export enum Error {
+  EMPTY_RESPONSE = 'empty_response',
   EXISTING_RECORD = 'existing_record',
   NON_EXISTING_RECORD = 'non_existing_record',
   BAD_REQUEST = 'bad_request',
