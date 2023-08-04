@@ -52,6 +52,8 @@ export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted'>
 export type NewUserEntry = Omit<IUser, 'role' | 'contact_url' | 'avatar' | 'isDeleted'>
 export type NewCommentEntry = Omit<IComment, 'isDeleted' >
 
+export type EditUserEntry = Omit<IUser, 'Role' | 'Email'>
+
 export type UserCredentials = Omit<IUser, 'role' | 'contact_url' | 'avatar' | 'firstname' | 'lastname' | 'username' | 'isDeleted'>
 
 export type ITokenPayload = Omit<ITokenData, 'iat' | 'exp'>
