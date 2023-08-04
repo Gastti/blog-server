@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { UserModel } from '../models/user.schema'
 import { ITokenData } from '../types'
-// import { UserModel } from '../models/user.schema'
 
 const JWT_SECRET_KEY: string | undefined = process.env.JWT_SECRET_KEY
 
@@ -40,9 +39,9 @@ export async function isAuthenticated (req: Request, res: Response, next: NextFu
     next()
   } catch (error) {
     console.error(error)
-    res.status(500).send({
-      status: 500,
-      message: 'Internal error, contact an admin.'
+    res.status(404).send({
+      status: 404,
+      message: 'Invalid/Expired token.'
     })
   }
 }

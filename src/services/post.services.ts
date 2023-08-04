@@ -68,8 +68,6 @@ export const getPostById = async (postId: string): Promise<IPost | null> => {
 export const getPostByAuthor = async (userId: string): Promise<IPost[] | Error> => {
   try {
     const posts = await PostModel.find({ userId })
-    console.log('000000')
-    console.log(posts)
     return posts
   } catch (error) {
     console.log('Error in post.services.ts - getPostById', error)
