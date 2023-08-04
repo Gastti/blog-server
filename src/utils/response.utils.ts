@@ -1,8 +1,11 @@
 import { Response } from 'express'
 import { Error } from '../enums'
-import { IComment } from '../types'
+import { IComment, IUser } from '../types'
 
-export const sendResponse = (res: Response, response: Error | IComment[] | IComment): void => {
+export const sendResponse = (
+  res: Response,
+  response: Error | IComment[] | IComment | IUser[] | IUser
+): void => {
   if (response === Error.BAD_REQUEST) {
     res.status(404).send({
       status: 404,

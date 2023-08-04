@@ -20,6 +20,7 @@ export interface IUser {
   avatar: string
   contact_url: string
   role: Role
+  isDeleted: boolean
 }
 
 export interface IPost {
@@ -52,7 +53,7 @@ export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted'>
 export type NewUserEntry = Omit<IUser, 'role' | 'contact_url' | 'avatar' | 'isDeleted'>
 export type NewCommentEntry = Omit<IComment, 'isDeleted' >
 
-export type EditUserEntry = Omit<IUser, 'Role' | 'Email'>
+export type EditUserEntry = Omit<IUser, 'Role' | 'Email' | 'isDeleted'>
 
 export type UserCredentials = Omit<IUser, 'role' | 'contact_url' | 'avatar' | 'firstname' | 'lastname' | 'username' | 'isDeleted'>
 

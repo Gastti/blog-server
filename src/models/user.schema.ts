@@ -10,7 +10,8 @@ const UserSchema: Schema = new Schema(
     password: { type: String, required: true },
     avatar: { type: String },
     contact_url: { type: String },
-    role: { type: String, required: true }
+    role: { type: String, required: true },
+    isDeleted: { type: Boolean, default: false }
   },
   {
     timestamps: true
