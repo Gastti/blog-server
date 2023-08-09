@@ -18,7 +18,8 @@ export interface IUser {
   email: string
   password: string
   avatar: string
-  contact_url: string
+  contactUrl: string
+  biography: string
   role: Role
   isDeleted: boolean
 }
@@ -49,12 +50,12 @@ export interface ITokenData {
 
 export type NonSensitiveInfoPostEntry = Omit<IPost, 'user_id'>
 
-export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted'>
-export type NewUserEntry = Omit<IUser, 'role' | 'contact_url' | 'avatar' | 'isDeleted'>
+export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted' | 'userId'>
+export type NewUserEntry = Omit<IUser, 'role' | 'contactUrl' | 'avatar' | 'isDeleted' | 'biography'>
 export type NewCommentEntry = Omit<IComment, 'isDeleted' >
 
-export type EditUserEntry = Omit<IUser, 'Role' | 'Email' | 'isDeleted'>
+export type EditUserEntry = Omit<IUser, 'role' | 'email' | 'isDeleted' | 'username' | 'password'>
 
-export type UserCredentials = Omit<IUser, 'role' | 'contact_url' | 'avatar' | 'firstname' | 'lastname' | 'username' | 'isDeleted'>
+export type UserCredentials = Omit<IUser, 'role' | 'contactUrl' | 'avatar' | 'firstname' | 'lastname' | 'username' | 'isDeleted' | 'biography'>
 
 export type ITokenPayload = Omit<ITokenData, 'iat' | 'exp'>

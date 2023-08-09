@@ -8,9 +8,10 @@ const UserSchema: Schema = new Schema(
     lastname: { type: String, required: true },
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
-    avatar: { type: String },
-    contact_url: { type: String },
+    avatar: { type: String, default: '' },
+    contactUrl: { type: String, default: '' },
     role: { type: String, required: true },
+    biography: { type: String, default: '' },
     isDeleted: { type: Boolean, default: false }
   },
   {

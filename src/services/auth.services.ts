@@ -28,7 +28,9 @@ export const signUp = async (newUserEntry: NewUserEntry): Promise<IUser | Error>
       email,
       password: hashedPassword,
       role: Role.Reader,
-      avatar: ''
+      avatar: '',
+      biography: '',
+      contactUrl: ''
     })
 
     return user

@@ -16,6 +16,11 @@ export const sendResponse = (
       status: 200,
       message: 'Inexistent.'
     })
+  } else if (response === Error.EXISTING_RECORD) {
+    res.status(404).send({
+      status: 404,
+      message: 'Email/Username already registered.'
+    })
   } else {
     res.status(200).send({
       status: 200,

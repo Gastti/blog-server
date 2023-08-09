@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import * as postServices from '../services/post.services'
 import { Error } from '../enums'
+import { NewPostEntry } from '../types'
 
 export const getAllPosts = async (_req: Request, res: Response): Promise<void> => {
   try {
@@ -150,7 +151,9 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
 export const editPost = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params
-    const post = await postServices.editPost(id, req.body)
+    const { title, content, category, tags } = req.body
+    const newPostData: NewPostEntry = { title, content, category, tags }
+    const post = await postServices.editPost(id, newPostData)
 
     if (post !== null) {
       res.status(200).send({
