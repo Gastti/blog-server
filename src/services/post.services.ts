@@ -4,7 +4,7 @@ import { IPost, NewPostEntry } from '../types'
 
 export const getAllPosts = async (): Promise<IPost[] | null> => {
   try {
-    const posts: IPost[] = await PostModel.find({ isDeleted: false })
+    const posts: IPost[] = await PostModel.find({ isDeleted: false }).populate('author')
 
     if (posts == null) return null
 

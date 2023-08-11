@@ -131,7 +131,7 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
       content,
       category,
       tags,
-      userId
+      author: userId
     }
 
     const post = await postServices.addPost(newPost)
