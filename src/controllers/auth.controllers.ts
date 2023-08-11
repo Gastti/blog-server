@@ -45,7 +45,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
       const accessToken = await generateToken(session, true)
       const refreshToken = await generateToken(session, false)
       // Guardar refresh token en la base de datos
-      await TokenModel.create({token: refreshToken})
+      await TokenModel.create({ token: refreshToken })
       res.status(200).send({
         status: 200,
         accessToken,
@@ -55,7 +55,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     res.status(500).send({
       status: 500,
-      message: 'Internal error, contact an admin.'
+      message: 'Internal error, contact an admin asd.'
     })
     console.log(error)
   }
