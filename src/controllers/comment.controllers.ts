@@ -38,7 +38,7 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
     const { postId } = req.params
     const commentData: NewCommentEntry = {
       content,
-      authorId: userId,
+      author: userId,
       postId
     }
 
