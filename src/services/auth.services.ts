@@ -1,7 +1,12 @@
 import { Role, Error } from '../enums'
+import { generateToken } from '../helpers/jwt'
+import { TokenModel } from '../models/token.schema'
 import { UserModel } from '../models/user.schema'
-import { IUser, UserCredentials, NewUserEntry, ITokenPayload } from '../types'
+import { IUser, UserCredentials, NewUserEntry, ITokenPayload, ITokenData } from '../types'
 import bcryptjs from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+
+const REFRESH_JWT_SECRET_KEY: string | undefined = process.env.REFRESH_JWT_SECRET_KEY
 
 export const signUp = async (newUserEntry: NewUserEntry): Promise<IUser | Error> => {
   try {
@@ -60,6 +65,40 @@ export const signIn = async (loginData: UserCredentials): Promise<ITokenPayload 
     return tokenPayload
   } catch (error) {
     console.log('Error in auth.services.ts - signIn', error)
+    return Error.BAD_REQUEST
+  }
+}
+
+export const refreshSession = async (oldRefreshToken: string): Promise<object | Error> => {
+  try {
+    const findToken = await TokenModel.findOne({ token: oldRefreshToken })
+    if (findToken === null) {
+      return Error.NON_EXISTING_RECORD
+    }
+    if (REFRESH_JWT_SECRET_KEY !== undefined) {
+      const tokenData = jwt.verify(oldRefreshToken, REFRESH_JWT_SECRET_KEY) as ITokenData
+
+      if (tokenData !== null) {
+        const tokenPayload = {
+          userId: tokenData.userId,
+          userRole: tokenData.userRole
+        }
+
+        const newAccessToken = await generateToken(tokenPayload, true)
+        const newRefreshToken = await generateToken(tokenPayload, false)
+
+        await TokenModel.create({ token: newRefreshToken })
+        await findToken.deleteOne()
+
+        return {
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken
+        }
+      }
+    }
+    return Error.BAD_REQUEST
+  } catch (error) {
+    console.log('Error in auth.services.ts - refreshSession', error)
     return Error.BAD_REQUEST
   }
 }

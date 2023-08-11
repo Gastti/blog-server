@@ -3,6 +3,7 @@ import * as authServices from '../services/auth.services'
 import { Error } from '../enums'
 import { generateToken } from '../helpers/jwt'
 import { sendResponse } from '../utils/response.utils'
+import { TokenModel } from '../models/token.schema'
 
 export const signUp = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -36,13 +37,35 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
         status: 404,
         message: 'Bad request.'
       })
-    } else if (session !== Error.EXISTING_RECORD && session !== Error.INTERNAL_ERROR && session !== Error.EMPTY_RESPONSE) {
-      const token = await generateToken(session)
+    } else if (
+      session !== Error.EXISTING_RECORD &&
+      session !== Error.INTERNAL_ERROR &&
+      session !== Error.EMPTY_RESPONSE
+    ) {
+      const accessToken = await generateToken(session, true)
+      const refreshToken = await generateToken(session, false)
+      // Guardar refresh token en la base de datos
+      await TokenModel.create({token: refreshToken})
       res.status(200).send({
         status: 200,
-        token
+        accessToken,
+        refreshToken
       })
     }
+  } catch (error) {
+    res.status(500).send({
+      status: 500,
+      message: 'Internal error, contact an admin.'
+    })
+    console.log(error)
+  }
+}
+
+export const refreshSession = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { refreshToken } = req.body
+    const response = await authServices.refreshSession(refreshToken)
+    sendResponse(res, response)
   } catch (error) {
     res.status(500).send({
       status: 500,

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import { UserModel } from '../models/user.schema'
 import { ITokenData } from '../types'
 
-const JWT_SECRET_KEY: string | undefined = process.env.JWT_SECRET_KEY
+const ACCESS_JWT_SECRET_KEY: string | undefined = process.env.ACCESS_JWT_SECRET_KEY
 
 export async function isAuthenticated (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -16,14 +16,14 @@ export async function isAuthenticated (req: Request, res: Response, next: NextFu
       return
     }
     token = token.split(' ')[1]
-    if (JWT_SECRET_KEY === undefined) {
+    if (ACCESS_JWT_SECRET_KEY === undefined) {
       res.status(500).send({
         status: 500,
         message: 'Internal error, contact an admin.'
       })
       return
     }
-    const tokenData = jwt.verify(token, JWT_SECRET_KEY) as ITokenData
+    const tokenData = jwt.verify(token, ACCESS_JWT_SECRET_KEY) as ITokenData
     const userId: string = tokenData.userId
     const user = await UserModel.findOne({ _id: userId })
     if (user == null) {
@@ -39,9 +39,9 @@ export async function isAuthenticated (req: Request, res: Response, next: NextFu
     next()
   } catch (error) {
     console.error(error)
-    res.status(404).send({
-      status: 404,
-      message: 'Invalid/Expired token.'
+    res.status(500).send({
+      status: 500,
+      message: 'Internal error, contact an admin.'
     })
   }
 }

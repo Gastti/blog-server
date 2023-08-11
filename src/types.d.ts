@@ -41,6 +41,10 @@ export interface IComment {
   isDeleted: boolean
 }
 
+export interface IToken {
+  token: string
+}
+
 export interface ITokenData {
   userId: string
   userRole: string

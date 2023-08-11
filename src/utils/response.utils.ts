@@ -4,7 +4,7 @@ import { IComment, IUser } from '../types'
 
 export const sendResponse = (
   res: Response,
-  response: Error | IComment[] | IComment | IUser[] | IUser
+  response: Error | IComment[] | IComment | IUser[] | IUser | object
 ): void => {
   if (response === Error.BAD_REQUEST) {
     res.status(404).send({
