@@ -33,7 +33,7 @@ export const signUp = async (newUserEntry: NewUserEntry): Promise<IUser | Error>
       email,
       password: hashedPassword,
       role: Role.Reader,
-      avatar: '',
+      avatar: 'https://i.ibb.co/JnWfTfP/user.png',
       biography: '',
       contactUrl: ''
     })

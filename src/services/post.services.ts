@@ -1,10 +1,14 @@
 import { Error } from '../enums'
 import { PostModel } from '../models/post.schema'
 import { IPost, NewPostEntry } from '../types'
+import { format, parseISO } from 'date-fns'
+import esLocale from 'date-fns/locale/es'
 
 export const getAllPosts = async (): Promise<IPost[] | null> => {
   try {
-    const posts: IPost[] = await PostModel.find({ isDeleted: false }).populate('author')
+    const posts: IPost[] = await PostModel.find({ isDeleted: false })
+      .select('title content category tags url publishedAt')
+      .populate({ path: 'author', select: 'username firstname lastname avatar role' })
 
     if (posts == null) return null
 
@@ -25,7 +29,9 @@ export const getPostsByQuery = async (queryParams: any): Promise<IPost[] | null>
         $and: [
           { title: { $regex: new RegExp(title, 'i') } },
           { isDeleted: false }]
-      }).exec()
+      })
+        .select('title content category tags url publishedAt')
+        .populate({ path: 'author', select: 'username firstname lastname avatar role' })
       if (posts.length > 0) return posts
     }
 
@@ -37,6 +43,8 @@ export const getPostsByQuery = async (queryParams: any): Promise<IPost[] | null>
           { isDeleted: false }
         ]
       })
+        .select('title content category tags url publishedAt')
+        .populate({ path: 'author', select: 'username firstname lastname avatar role' })
       if (posts.length > 0) return posts
     }
 
@@ -55,6 +63,8 @@ export const getPostById = async (postId: string): Promise<IPost | null> => {
         { isDeleted: false }
       ]
     })
+      .select('title content category tags url publishedAt')
+      .populate({ path: 'author', select: 'username firstname lastname avatar role' })
 
     if (post == null) return null
 
@@ -68,6 +78,8 @@ export const getPostById = async (postId: string): Promise<IPost | null> => {
 export const getPostByAuthor = async (userId: string): Promise<IPost[] | Error> => {
   try {
     const posts = await PostModel.find({ userId })
+      .select('title content category tags url publishedAt')
+      .populate({ path: 'author', select: 'username firstname lastname avatar role' })
     return posts
   } catch (error) {
     console.log('Error in post.services.ts - getPostById', error)
@@ -78,6 +90,17 @@ export const getPostByAuthor = async (userId: string): Promise<IPost[] | Error> 
 export const addPost = async (newPostEntry: NewPostEntry): Promise<IPost | null> => {
   try {
     const post = await PostModel.create(newPostEntry)
+
+    if (typeof post.createdAt === 'string') {
+      const parsedDate = parseISO(post.createdAt)
+      const formattedDate = format(parsedDate, "d 'de' MMMM 'del' yyyy", { locale: esLocale })
+
+      post.publishedAt = formattedDate
+      await post.save()
+    } else {
+      console.error('Invalid date format for post.createdAt')
+    }
+
     return post
   } catch (error) {
     console.log('Error in post.services.ts', error)

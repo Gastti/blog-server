@@ -3,7 +3,7 @@ import { IComment } from '../types'
 
 const CommentSchema: Schema = new Schema(
   {
-    author: { type: String },
+    author: { type: Schema.Types.ObjectId, ref: 'User' },
     postId: { type: String },
     content: { type: String },
     isDeleted: { type: Boolean, default: false }

@@ -4,7 +4,9 @@ import { IComment, NewCommentEntry } from '../types'
 
 export const getAllComments = async (): Promise<IComment[] | Error> => {
   try {
-    const comments = await CommentModel.find()
+    const comments = await CommentModel.find({ isDeleted: false })
+      .select('content createdAt')
+      .populate({ path: 'author', select: 'username firstname lastname avatar role' })
     if (comments.length > 0) return comments
     else return Error.EMPTY_RESPONSE
   } catch (error) {
@@ -15,7 +17,12 @@ export const getAllComments = async (): Promise<IComment[] | Error> => {
 
 export const getCommentsByPost = async (postId: string): Promise<IComment[] | Error> => {
   try {
-    const comments = await CommentModel.find({ postId })
+    const comments = await CommentModel.find({
+      $and: [
+        { postId },
+        { isDeleted: false }
+      ]
+    }).populate({ path: 'author', select: 'username firstname lastname avatar role' })
     if (comments.length > 0) return comments
     else return Error.EMPTY_RESPONSE
   } catch (error) {
@@ -43,7 +50,8 @@ export const editComment = async (commentId: string, content: string): Promise<I
         { isDeleted: false }
       ]
     }, { content }, { new: true })
-
+      .select('content updatedAt')
+      .populate({ path: 'author', select: 'username firstname lastname avatar role' })
     if (comment !== null) return comment
     else return Error.EMPTY_RESPONSE
   } catch (error) {
@@ -60,6 +68,7 @@ export const deleteComment = async (commentId: string): Promise<IComment | Error
         { isDeleted: false }
       ]
     }, { isDeleted: true }, { new: true })
+      .populate({ path: 'author', select: 'username firstname lastname avatar role' })
     if (comment !== null) return comment
     else return Error.EMPTY_RESPONSE
   } catch (error) {

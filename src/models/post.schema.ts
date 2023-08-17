@@ -9,7 +9,8 @@ const PostSchema: Schema = new Schema(
     category: { type: String },
     tags: { type: [String] },
     url: { type: String },
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false },
+    publishedAt: { type: String }
   },
   {
     timestamps: true

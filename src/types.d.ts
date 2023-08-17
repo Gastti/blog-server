@@ -40,6 +40,9 @@ export interface IPost {
   url: string
   tags: string[]
   isDeleted: boolean
+  createdAt: string
+  updatedAt: string
+  publishedAt: string
 }
 
 export interface IComment {
@@ -62,7 +65,7 @@ export interface ITokenData {
 
 export type NonSensitiveInfoPostEntry = Omit<IPost, 'user_id'>
 
-export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted' | 'author'>
+export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted' | 'author' | 'createdAt' | 'updatedAt' | 'publishedAt'>
 export type NewUserEntry = Omit<IUser, 'role' | 'contactUrl' | 'avatar' | 'isDeleted' | 'biography'>
 export type NewCommentEntry = Omit<IComment, 'isDeleted' >
 
