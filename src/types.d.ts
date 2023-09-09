@@ -37,12 +37,12 @@ export interface IPost {
   title: string
   content: string
   category: Category
+  image: string
   url: string
   tags: string[]
   isDeleted: boolean
   createdAt: string
   updatedAt: string
-  publishedAt: string
 }
 
 export interface IComment {
@@ -64,11 +64,13 @@ export interface ITokenData {
 }
 
 export type NonSensitiveInfoPostEntry = Omit<IPost, 'user_id'>
+export type NonSensitiveUserData = Omit<IUser, 'email' | 'password' | 'isDeleted'>
 
-export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted' | 'author' | 'createdAt' | 'updatedAt' | 'publishedAt'>
+export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted' | 'author' | 'createdAt' | 'updatedAt'>
 export type NewUserEntry = Omit<IUser, 'role' | 'contactUrl' | 'avatar' | 'isDeleted' | 'biography'>
-export type NewCommentEntry = Omit<IComment, 'isDeleted' >
+export type NewCommentEntry = Omit<IComment, 'isDeleted'>
 
+export type EditPostEntry = Omit<NewPostEntry, 'image'>
 export type EditUserEntry = Omit<IUser, 'role' | 'email' | 'isDeleted' | 'username' | 'password'>
 
 export type UserCredentials = Omit<IUser, 'role' | 'contactUrl' | 'avatar' | 'firstname' | 'lastname' | 'username' | 'isDeleted' | 'biography'>

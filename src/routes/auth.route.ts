@@ -48,7 +48,7 @@ router.post('/signin', [
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 authControllers.signIn)
 
-router.get('/refreshsession', [
+router.post('/refreshsession', [
   check('refreshToken')
     .notEmpty().withMessage('Required field.')
     .isString().withMessage('Must be a string.')

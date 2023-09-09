@@ -58,7 +58,7 @@ export async function isPostAuthor (req: Request, res: Response, next: NextFunct
       return
     }
 
-    if (post.author === userId || userRole === Role.Admin) {
+    if (post.author.toString() === userId || userRole === Role.Admin) {
       next()
     } else {
       res.status(403).send({
@@ -88,8 +88,9 @@ export async function isCommentAuthor (req: Request, res: Response, next: NextFu
       })
       return
     }
-
-    if (comment.author === userId || userRole === Role.Admin) {
+    console.log('Token User', userId)
+    console.log('Comment User', comment.author)
+    if (comment.author.toString() === userId || userRole === Role.Admin) {
       next()
     } else {
       res.status(403).send({

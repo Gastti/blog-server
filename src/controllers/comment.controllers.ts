@@ -1,7 +1,9 @@
 import { Request, Response } from 'express'
 import * as commentServices from '../services/comment.services'
+import * as postServices from '../services/post.services'
 import { NewCommentEntry } from '../types'
 import { sendResponse } from '../utils/response.utils'
+import { Error } from '../enums'
 
 export const getAllComments = async (_req: Request, res: Response): Promise<void> => {
   try {
@@ -40,6 +42,13 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
       content,
       author: userId,
       postId
+    }
+
+    const findPost = await postServices.getPostById(postId)
+
+    if (findPost == null) {
+      sendResponse(res, Error.EMPTY_RESPONSE)
+      return
     }
 
     const response = await commentServices.addComment(commentData)

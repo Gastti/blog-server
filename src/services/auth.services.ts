@@ -2,13 +2,13 @@ import { Role, Error } from '../enums'
 import { generateToken } from '../helpers/jwt'
 import { TokenModel } from '../models/token.schema'
 import { UserModel } from '../models/user.schema'
-import { IUser, UserCredentials, NewUserEntry, ITokenPayload, ITokenData } from '../types'
+import { UserCredentials, NewUserEntry, ITokenPayload, ITokenData, NonSensitiveUserData } from '../types'
 import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 const REFRESH_JWT_SECRET_KEY: string | undefined = process.env.REFRESH_JWT_SECRET_KEY
 
-export const signUp = async (newUserEntry: NewUserEntry): Promise<IUser | Error> => {
+export const signUp = async (newUserEntry: NewUserEntry): Promise<NonSensitiveUserData | Error> => {
   try {
     const { username, firstname, lastname, email, password } = newUserEntry
 
@@ -38,7 +38,17 @@ export const signUp = async (newUserEntry: NewUserEntry): Promise<IUser | Error>
       contactUrl: ''
     })
 
-    return user
+    const nonSensitiveUserData = {
+      username: user.username,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      role: user.role,
+      avatar: user.avatar,
+      biography: user.biography,
+      contactUrl: user.contactUrl
+    }
+
+    return nonSensitiveUserData
   } catch (error) {
     console.log('Error in auth.services.ts - signUp', error)
     return Error.BAD_REQUEST

@@ -5,8 +5,8 @@ import { IComment, NewCommentEntry } from '../types'
 export const getAllComments = async (): Promise<IComment[] | Error> => {
   try {
     const comments = await CommentModel.find({ isDeleted: false })
-      .select('content createdAt')
-      .populate({ path: 'author', select: 'username firstname lastname avatar role' })
+      .select('content')
+      .populate({ path: 'author', select: '-_id username firstname lastname avatar role' })
     if (comments.length > 0) return comments
     else return Error.EMPTY_RESPONSE
   } catch (error) {
@@ -22,7 +22,9 @@ export const getCommentsByPost = async (postId: string): Promise<IComment[] | Er
         { postId },
         { isDeleted: false }
       ]
-    }).populate({ path: 'author', select: 'username firstname lastname avatar role' })
+    })
+      .select('content postId')
+      .populate({ path: 'author', select: '-_id username firstname lastname avatar role' })
     if (comments.length > 0) return comments
     else return Error.EMPTY_RESPONSE
   } catch (error) {

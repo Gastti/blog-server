@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import * as postServices from '../services/post.services'
 import { Error } from '../enums'
-import { NewPostEntry } from '../types'
+import { EditPostEntry } from '../types'
+import { getFileUrl, uploadFile } from '../services/s3.services'
 
 export const getAllPosts = async (_req: Request, res: Response): Promise<void> => {
   try {
@@ -123,16 +124,24 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
   try {
     const { title, content, category, tags } = req.body
     const { userId } = req.authenticatedUser
-    const url = req.body.title.toLowerCase().split(' ').join('-')
+    const url = req.body.title
+      .toLowerCase()
+      .split(' ')
+      .join('-')
+
+    const splitedTags = tags.replace(/^"|"$/g, '').split(',')
+
+    const uploadImage = await uploadFile(req.files?.image)
+    const imageUrl = await getFileUrl(uploadImage.key)
 
     const newPost = {
       url,
       title,
       content,
       category,
-      tags,
+      tags: splitedTags,
       author: userId,
-      publishedAt: ''
+      image: imageUrl
     }
 
     const post = await postServices.addPost(newPost)
@@ -153,7 +162,7 @@ export const editPost = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params
     const { title, content, category, tags } = req.body
-    const newPostData: NewPostEntry = { title, content, category, tags }
+    const newPostData: EditPostEntry = { title, content, category, tags }
     const post = await postServices.editPost(id, newPostData)
 
     if (post !== null) {

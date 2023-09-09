@@ -6,6 +6,8 @@ import bcryptjs from 'bcryptjs'
 export const getAllUsers = async (): Promise<IUser[] | Error> => {
   try {
     const users = await UserModel.find({ isDeleted: false })
+      .select('-password -createdAt -updatedAt')
+
     if (users.length > 0) return users
     else return Error.EMPTY_RESPONSE
   } catch (error) {
@@ -22,6 +24,7 @@ export const getUser = async (userId: string): Promise<IUser | Error> => {
         { isDeleted: false }
       ]
     })
+      .select('-password -createdAt -updatedAt')
 
     if (user !== null) return user
     else return Error.EMPTY_RESPONSE
@@ -39,6 +42,7 @@ export const editUser = async (userId: string, newUserData: EditUserEntry): Prom
         { isDeleted: false }
       ]
     }, newUserData, { new: true })
+      .select('-password -createdAt -updatedAt')
 
     if (user !== null) return user
     else return Error.EMPTY_RESPONSE

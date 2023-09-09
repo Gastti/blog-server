@@ -51,9 +51,7 @@ router.post('/', [
     .isString().withMessage('Must be type string.')
     .trim().escape(),
   check('tags')
-    .notEmpty().withMessage('Required field.')
-    .isArray().withMessage('Must be an array.')
-    .trim().escape(),
+    .notEmpty().withMessage('Required field.'), // .trim().escape()
   isAuthenticated,
   permissions.isWriter,
   validateFields
