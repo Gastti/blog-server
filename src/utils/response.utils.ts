@@ -1,10 +1,12 @@
 import { Response } from 'express'
 import { Error } from '../enums'
-import { IComment, IUser, NonSensitiveUserData } from '../types'
+import { IComment, IPost, IUser, NonSensitiveUserData } from '../types'
 
 export const sendResponse = (
   res: Response,
-  response: Error | IComment[] | IComment | IUser[] | IUser | object | NonSensitiveUserData
+  response:
+  Error | IComment[] | IComment | IUser[] | IUser | object | NonSensitiveUserData |
+  IPost | IPost[]
 ): void => {
   if (response === Error.BAD_REQUEST) {
     res.status(404).send({
