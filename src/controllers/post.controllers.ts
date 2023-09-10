@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import * as postServices from '../services/post.services'
+import * as imageServices from '../services/image.services'
 import { Error } from '../enums'
 import { EditPostEntry } from '../types'
-import { getFileUrl, uploadFile } from '../services/s3.services'
 
 export const getAllPosts = async (_req: Request, res: Response): Promise<void> => {
   try {
@@ -130,9 +130,16 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
       .join('-')
 
     const splitedTags = tags.replace(/^"|"$/g, '').split(',')
-
-    const uploadImage = await uploadFile(req.files?.image)
-    const imageUrl = await getFileUrl(uploadImage.key)
+    let imageUrl: string = ''
+    if (
+      req.files !== null &&
+      req.files !== undefined &&
+      'image' in req.files
+    ) {
+      const imageFile = req.files.image
+      const uploadImage = await imageServices.saveImageOnDatabase(imageFile)
+      imageUrl = uploadImage
+    }
 
     const newPost = {
       url,
@@ -145,6 +152,7 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
     }
 
     const post = await postServices.addPost(newPost)
+
     res.status(200).send({
       status: 200,
       data: post

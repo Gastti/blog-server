@@ -4,6 +4,7 @@ import * as postControllers from '../controllers/post.controllers'
 import { validateFields } from '../middlewares/validate'
 import { isAuthenticated } from '../middlewares/isAuthenticated'
 import * as permissions from '../middlewares/permissions'
+import checkImage from '../middlewares/checkImage'
 
 const router = Router()
 
@@ -52,6 +53,7 @@ router.post('/', [
     .trim().escape(),
   check('tags')
     .notEmpty().withMessage('Required field.'), // .trim().escape()
+  checkImage,
   isAuthenticated,
   permissions.isWriter,
   validateFields

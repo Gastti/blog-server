@@ -1,14 +1,26 @@
 import { Error } from '../enums'
 import { PostModel } from '../models/post.schema'
 import { EditPostEntry, IPost, NewPostEntry } from '../types'
+import * as imageServices from './image.services'
 
 export const getAllPosts = async (): Promise<IPost[] | null> => {
   try {
     const posts: IPost[] = await PostModel.find({ isDeleted: false })
-      .select('title content category tags url createdAt')
+      .select('title content image category tags url createdAt')
       .populate({ path: 'author', select: '-_id username firstname lastname avatar role' })
+      .populate({ path: 'image', select: 'url expirationDate key' })
 
     if (posts == null) return null
+
+    const currentDate = new Date()
+    for (const post of posts) {
+      const expirationDate = new Date(post.image.expirationDate)
+      if (currentDate > expirationDate) {
+        const key = post.image.key
+        console.log('expired')
+        await imageServices.updateImageUrlOnDatabase(key)
+      }
+    }
 
     return posts
   } catch (error) {
