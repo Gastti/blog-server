@@ -33,11 +33,12 @@ export interface MongoAuthor {
 }
 
 export interface IPost {
+  _id?: string
   author: string
   title: string
   content: string
   category: Category
-  image: string
+  image: Image
   url: string
   tags: string[]
   isDeleted: boolean
@@ -63,10 +64,17 @@ export interface ITokenData {
   exp: number
 }
 
+export interface Image {
+  _id: string
+  url: string
+  key: string
+  expirationDate: string
+}
+
 export type NonSensitiveInfoPostEntry = Omit<IPost, 'user_id'>
 export type NonSensitiveUserData = Omit<IUser, 'email' | 'password' | 'isDeleted'>
 
-export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted' | 'author' | 'createdAt' | 'updatedAt'>
+export type NewPostEntry = Omit<NonSensitiveInfoPostEntry, 'url' | 'isDeleted' | 'author' | 'createdAt' | 'updatedAt' | 'image'>
 export type NewUserEntry = Omit<IUser, 'role' | 'contactUrl' | 'avatar' | 'isDeleted' | 'biography'>
 export type NewCommentEntry = Omit<IComment, 'isDeleted'>
 
