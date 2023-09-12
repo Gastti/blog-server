@@ -31,6 +31,8 @@ export const updateImageUrlOnDatabase = async (key: string): Promise<string | Er
     const currentDate = new Date()
     const expirationDate = new Date(currentDate.getTime() + 3600 * 1000)
 
+    console.log('New presigned link', generatePresignedUrl)
+
     await ImageModel.findOneAndUpdate(
       { key },
       { url: generatePresignedUrl, expirationDate }

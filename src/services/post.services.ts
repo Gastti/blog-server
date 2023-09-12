@@ -1,35 +1,35 @@
 import { Error } from '../enums'
 import { PostModel } from '../models/post.schema'
 import { EditPostEntry, IPost, NewPostEntry } from '../types'
-import * as imageServices from './image.services'
+import { handleExpiratedImage, verifyExpirationDate } from '../utils/image.utils'
 
-export const getAllPosts = async (): Promise<IPost[] | null> => {
+export const getAllPosts = async (): Promise<IPost[] | Error> => {
   try {
-    const posts: IPost[] = await PostModel.find({ isDeleted: false })
+    const postsImages: IPost[] = await PostModel.find({ isDeleted: false })
+      .select('title')
+      .populate({ path: 'image', select: 'expirationDate key' })
+
+    if (postsImages == null) return Error.BAD_REQUEST
+
+    for (const data of postsImages) {
+      const { image } = data
+      const isExpired = verifyExpirationDate(image.expirationDate)
+      if (isExpired) await handleExpiratedImage(image.key)
+    }
+
+    const posts = await PostModel.find({ isDeleted: false })
       .select('title content image category tags url createdAt')
       .populate({ path: 'author', select: '-_id username firstname lastname avatar role' })
-      .populate({ path: 'image', select: 'url expirationDate key' })
-
-    if (posts == null) return null
-
-    const currentDate = new Date()
-    for (const post of posts) {
-      const expirationDate = new Date(post.image.expirationDate)
-      if (currentDate > expirationDate) {
-        const key = post.image.key
-        console.log('expired')
-        await imageServices.updateImageUrlOnDatabase(key)
-      }
-    }
+      .populate({ path: 'image', select: '-_id url' })
 
     return posts
   } catch (error) {
     console.log('Error in post.services.ts', error)
-    return null
+    return Error.INTERNAL_ERROR
   }
 }
 
-export const getPostsByQuery = async (queryParams: any): Promise<IPost[] | null> => {
+export const getPostsByQuery = async (queryParams: any): Promise<IPost[] | null | Error> => {
   try {
     const tag: string = queryParams.tag ?? ''
     const title: string = queryParams.title ?? ''
@@ -42,7 +42,10 @@ export const getPostsByQuery = async (queryParams: any): Promise<IPost[] | null>
       })
         .select('title content category tags url createdAt')
         .populate({ path: 'author', select: 'username firstname lastname avatar role' })
-      if (posts.length > 0) return posts
+
+      if (posts === null) return Error.BAD_REQUEST
+
+      return posts
     }
 
     if (tag !== null && tag.length > 0) {
@@ -55,7 +58,10 @@ export const getPostsByQuery = async (queryParams: any): Promise<IPost[] | null>
       })
         .select('title content category tags url createdAt')
         .populate({ path: 'author', select: 'username firstname lastname avatar role' })
-      if (posts.length > 0) return posts
+
+      if (posts === null) return Error.BAD_REQUEST
+
+      return posts
     }
 
     return null
@@ -65,8 +71,22 @@ export const getPostsByQuery = async (queryParams: any): Promise<IPost[] | null>
   }
 }
 
-export const getPostById = async (postId: string): Promise<IPost | null> => {
+export const getPostById = async (postId: string): Promise<IPost | null | Error> => {
   try {
+    const postImage: IPost | null = await PostModel.findOne({
+      $and: [
+        { _id: postId },
+        { isDeleted: false }
+      ]
+    })
+      .select('title')
+      .populate({ path: 'image', select: 'expirationDate key' })
+
+    if (postImage == null) return Error.BAD_REQUEST
+
+    const isExpired = verifyExpirationDate(postImage.image.expirationDate)
+    if (isExpired) await handleExpiratedImage(postImage.image.key)
+
     const post: IPost | null = await PostModel.findOne({
       $and: [
         { _id: postId },
@@ -75,8 +95,7 @@ export const getPostById = async (postId: string): Promise<IPost | null> => {
     })
       .select('title content category tags url createdAt')
       .populate({ path: 'author', select: 'username firstname lastname avatar role' })
-
-    if (post == null) return null
+      .populate({ path: 'image', select: '-_id url' })
 
     return post
   } catch (error) {
@@ -90,6 +109,9 @@ export const getPostByAuthor = async (userId: string): Promise<IPost[] | Error> 
     const posts = await PostModel.find({ userId })
       .select('title content category tags url createdAt')
       .populate({ path: 'author', select: 'username firstname lastname avatar role' })
+
+    if (posts === null) return Error.BAD_REQUEST
+
     return posts
   } catch (error) {
     console.log('Error in post.services.ts - getPostById', error)

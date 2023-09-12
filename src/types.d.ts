@@ -84,3 +84,5 @@ export type EditUserEntry = Omit<IUser, 'role' | 'email' | 'isDeleted' | 'userna
 export type UserCredentials = Omit<IUser, 'role' | 'contactUrl' | 'avatar' | 'firstname' | 'lastname' | 'username' | 'isDeleted' | 'biography'>
 
 export type ITokenPayload = Omit<ITokenData, 'iat' | 'exp'>
+
+export type ImageEntry = Omit<Image, '_id'>

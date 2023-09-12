@@ -47,10 +47,13 @@ postControllers.getMyPosts)
 
 // Create a new post endpoint
 router.post('/', [
-  check(['title', 'category', 'content'])
+  check(['title', 'category'])
     .notEmpty().withMessage('Required field.')
     .isString().withMessage('Must be type string.')
     .trim().escape(),
+  check('content')
+    .notEmpty().withMessage('Required field.')
+    .isString().withMessage('Must be type string.'),
   check('tags')
     .notEmpty().withMessage('Required field.'), // .trim().escape()
   checkImage,
