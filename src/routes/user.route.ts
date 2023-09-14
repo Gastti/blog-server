@@ -15,7 +15,7 @@ router.get('/', [
 userControllers.getAllUsers)
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.get('/:userId', userControllers.getUserData)
+router.get('/find/:userId', userControllers.getUserData)
 
 // Get my user data
 router.get('/me', [

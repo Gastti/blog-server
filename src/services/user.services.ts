@@ -24,7 +24,7 @@ export const getUser = async (userId: string): Promise<IUser | Error> => {
         { isDeleted: false }
       ]
     })
-      .select('-password -createdAt -updatedAt')
+      .select('-password -createdAt -updatedAt -_id -__v -isDeleted')
 
     if (user !== null) return user
     else return Error.EMPTY_RESPONSE
@@ -42,7 +42,7 @@ export const editUser = async (userId: string, newUserData: EditUserEntry): Prom
         { isDeleted: false }
       ]
     }, newUserData, { new: true })
-      .select('-password -createdAt -updatedAt')
+      .select('-password -createdAt -updatedAt -_id -__v -isDeleted')
 
     if (user !== null) return user
     else return Error.EMPTY_RESPONSE
@@ -52,7 +52,7 @@ export const editUser = async (userId: string, newUserData: EditUserEntry): Prom
   }
 }
 
-export const changePassword = async (userId: string, oldPassword: string, newPassword: string): Promise <IUser | Error> => {
+export const changePassword = async (userId: string, oldPassword: string, newPassword: string): Promise<IUser | Error> => {
   try {
     const user = await UserModel.findOne({
       $and: [
