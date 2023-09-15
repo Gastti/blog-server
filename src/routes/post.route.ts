@@ -36,14 +36,14 @@ router.get('/me', [
 postControllers.getMyPosts)
 
 // List post by author endpoint
-router.get('/author/:id', [
-  param('id')
+router.get('/author/:username', [
+  param('username')
     .isString().withMessage('Must be a string.')
     .isMongoId().withMessage('Must be a valid mongo id.')
     .trim().escape()
 ],
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-postControllers.getMyPosts)
+postControllers.getPostsByAuthor)
 
 // Create a new post endpoint
 router.post('/', [
