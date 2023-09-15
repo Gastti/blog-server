@@ -1,5 +1,6 @@
 import { Error } from '../enums'
 import { PostModel } from '../models/post.schema'
+import { UserModel } from '../models/user.schema'
 import { EditPostEntry, IPost, NewPostEntry } from '../types'
 import { handleExpiratedImage, verifyExpirationDate } from '../utils/image.utils'
 
@@ -104,17 +105,37 @@ export const getPostById = async (postId: string): Promise<IPost | null | Error>
   }
 }
 
-export const getPostByAuthor = async (userId: string): Promise<IPost[] | Error> => {
+export const getPostByAuthor = async (username: string): Promise<IPost[] | Error> => {
   try {
-    const posts = await PostModel.find({ userId })
+    const user = await UserModel.findOne({ username })
+
+    const postsImages: IPost[] = await PostModel.find({
+      $and: [
+        { author: { $eq: user?._id } },
+        { isDeleted: false }
+      ]
+    })
+      .select('title')
+      .populate({ path: 'image', select: 'expirationDate key' })
+
+    if (postsImages == null) return Error.BAD_REQUEST
+
+    for (const data of postsImages) {
+      const { image } = data
+      const isExpired = verifyExpirationDate(image.expirationDate)
+      if (isExpired) await handleExpiratedImage(image.key)
+    }
+
+    const posts = await PostModel.find({ author: { $eq: user?._id } })
       .select('title content category tags url createdAt')
       .populate({ path: 'author', select: 'username firstname lastname avatar role' })
+      .populate({ path: 'image', select: 'url' })
 
     if (posts === null) return Error.BAD_REQUEST
 
     return posts
   } catch (error) {
-    console.log('Error in post.services.ts - getPostById', error)
+    console.log('Error in post.services.ts - getPostByAuthor', error)
     return Error.INTERNAL_ERROR
   }
 }
