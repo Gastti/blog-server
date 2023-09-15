@@ -3,6 +3,7 @@ import * as postServices from '../services/post.services'
 import * as imageServices from '../services/image.services'
 import { Error } from '../enums'
 import { EditPostEntry } from '../types'
+import { sendResponse } from '../utils/response.utils'
 
 export const getAllPosts = async (_req: Request, res: Response): Promise<void> => {
   try {
@@ -99,20 +100,11 @@ export const getMyPosts = async (req: Request, res: Response): Promise<void> => 
 
 export const getPostsByAuthor = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params
-    const response = await postServices.getPostByAuthor(id)
-    if (response === Error.INTERNAL_ERROR) {
-      res.status(404).send({
-        status: 404,
-        message: 'Bad request.'
-      })
-    } else {
-      res.status(200).send({
-        status: 200,
-        data: response
-      })
-    }
+    const { username } = req.params
+    const response = await postServices.getPostByAuthor(username)
+    sendResponse(res, response)
   } catch (error) {
+    console.log('Error post.controllers - getPostsByAuthor', error)
     res.status(500).send({
       status: 500,
       data: error
