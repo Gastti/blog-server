@@ -7,7 +7,7 @@ const REFRESH_JWT_SECRET_KEY: string | undefined = process.env.REFRESH_JWT_SECRE
 
 export const generateToken = async (userData: ITokenPayload, isAccessToken: boolean): Promise<string | Error> => {
   const payload = userData
-  const options = { expiresIn: isAccessToken ? '60m' : '31d' }
+  const options = { expiresIn: isAccessToken ? '1m' : '1d' }
 
   return await new Promise((resolve, reject) => {
     try {

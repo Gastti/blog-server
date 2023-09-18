@@ -63,8 +63,10 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
 
 export const refreshSession = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { refreshToken } = req.body
-    const response = await authServices.refreshSession(refreshToken)
+    const authorization: string = req.header('Authorization') as string
+    const token = authorization.split(' ')[1]
+    const response = await authServices.refreshSession(token)
+    console.log(response)
     sendResponse(res, response)
   } catch (error) {
     res.status(500).send({

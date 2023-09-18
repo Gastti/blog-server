@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { check } from 'express-validator'
 import * as authControllers from '../controllers/auth.controllers'
 import { validateFields } from '../middlewares/validate'
+import verifyAuthorizationHeader from '../middlewares/verifyAuthorizationHeader'
 
 const router = Router()
 
@@ -48,11 +49,11 @@ router.post('/signin', [
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 authControllers.signIn)
 
-router.post('/refreshsession', [
-  check('refreshToken')
-    .notEmpty().withMessage('Required field.')
-    .isString().withMessage('Must be a string.')
-    .trim().escape(),
+router.post('/refresh', [
+  check('Authorization')
+    .notEmpty().withMessage('Authorization header is required.')
+    .isString().withMessage('Authorization header must be a string.'),
+  verifyAuthorizationHeader,
   validateFields
 ],
 // eslint-disable-next-line @typescript-eslint/no-misused-promises

@@ -83,6 +83,7 @@ export const refreshSession = async (oldRefreshToken: string): Promise<object | 
   try {
     const findToken = await TokenModel.findOne({ token: oldRefreshToken })
     if (findToken === null) {
+      console.log('HERE')
       return Error.NON_EXISTING_RECORD
     }
     if (REFRESH_JWT_SECRET_KEY !== undefined) {
@@ -101,8 +102,8 @@ export const refreshSession = async (oldRefreshToken: string): Promise<object | 
         await findToken.deleteOne()
 
         return {
-          accessToken: newAccessToken,
-          refreshToken: newRefreshToken
+          access: newAccessToken,
+          refresh: newRefreshToken
         }
       }
     }
