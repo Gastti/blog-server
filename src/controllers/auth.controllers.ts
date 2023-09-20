@@ -4,6 +4,7 @@ import { Error } from '../enums'
 import { generateToken } from '../helpers/jwt'
 import { sendResponse } from '../utils/response.utils'
 import { TokenModel } from '../models/token.schema'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 
 export const signUp = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -42,14 +43,18 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
       session !== Error.INTERNAL_ERROR &&
       session !== Error.EMPTY_RESPONSE
     ) {
-      const accessToken = await generateToken(session, true)
-      const refreshToken = await generateToken(session, false)
+      const access = await generateToken(session, true)
+      const refresh = await generateToken(session, false)
+      const decodedAccess = jwt.decode(access) as JwtPayload
+      const accessExpiration = decodedAccess.exp
+
       // Guardar refresh token en la base de datos
-      await TokenModel.create({ token: refreshToken })
+      await TokenModel.create({ token: refresh })
       res.status(200).send({
         status: 200,
-        accessToken,
-        refreshToken
+        access,
+        refresh,
+        accessExpiration
       })
     }
   } catch (error) {
@@ -66,7 +71,6 @@ export const refreshSession = async (req: Request, res: Response): Promise<void>
     const authorization: string = req.header('Authorization') as string
     const token = authorization.split(' ')[1]
     const response = await authServices.refreshSession(token)
-    console.log(response)
     sendResponse(res, response)
   } catch (error) {
     res.status(500).send({

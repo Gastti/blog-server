@@ -4,7 +4,7 @@ const verifyAuthorizationHeader = (req: Request, res: Response, next: NextFuncti
   const authorizationHeader = req.header('Authorization')
   console.log(authorizationHeader)
   if (!((authorizationHeader?.startsWith('Bearer ')) ?? false)) {
-    return res.status(401).json({ message: 'Unauthorized' })
+    return res.status(401).json({ message: 'Unauthorizedddd' })
   }
   next()
   return undefined

@@ -4,7 +4,7 @@ import { TokenModel } from '../models/token.schema'
 import { UserModel } from '../models/user.schema'
 import { UserCredentials, NewUserEntry, ITokenPayload, ITokenData, NonSensitiveUserData } from '../types'
 import bcryptjs from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 
 const REFRESH_JWT_SECRET_KEY: string | undefined = process.env.REFRESH_JWT_SECRET_KEY
 
@@ -82,10 +82,11 @@ export const signIn = async (loginData: UserCredentials): Promise<ITokenPayload 
 export const refreshSession = async (oldRefreshToken: string): Promise<object | Error> => {
   try {
     const findToken = await TokenModel.findOne({ token: oldRefreshToken })
+
     if (findToken === null) {
-      console.log('HERE')
       return Error.NON_EXISTING_RECORD
     }
+
     if (REFRESH_JWT_SECRET_KEY !== undefined) {
       const tokenData = jwt.verify(oldRefreshToken, REFRESH_JWT_SECRET_KEY) as ITokenData
 
@@ -96,14 +97,12 @@ export const refreshSession = async (oldRefreshToken: string): Promise<object | 
         }
 
         const newAccessToken = await generateToken(tokenPayload, true)
-        const newRefreshToken = await generateToken(tokenPayload, false)
-
-        await TokenModel.create({ token: newRefreshToken })
-        await findToken.deleteOne()
+        const decodedAccess = jwt.decode(newAccessToken) as JwtPayload
+        const accessExpiration = decodedAccess.exp
 
         return {
           access: newAccessToken,
-          refresh: newRefreshToken
+          accessExpiration
         }
       }
     }

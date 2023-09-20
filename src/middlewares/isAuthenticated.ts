@@ -39,9 +39,9 @@ export async function isAuthenticated (req: Request, res: Response, next: NextFu
     next()
   } catch (error) {
     console.error(error)
-    res.status(500).send({
-      status: 500,
-      message: 'Internal error, contact an admin.'
+    res.status(401).send({
+      status: 401,
+      message: 'Unauthorized.'
     })
   }
 }
