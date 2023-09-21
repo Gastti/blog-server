@@ -19,6 +19,7 @@ export const getAllPosts = async (): Promise<IPost[] | Error> => {
     }
 
     const posts = await PostModel.find({ isDeleted: false })
+      .sort({ createdAt: -1 })
       .select('title content image category tags url createdAt')
       .populate({ path: 'author', select: '-_id username firstname lastname avatar role' })
       .populate({ path: 'image', select: '-_id url' })

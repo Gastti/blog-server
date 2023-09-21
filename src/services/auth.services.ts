@@ -4,7 +4,7 @@ import { TokenModel } from '../models/token.schema'
 import { UserModel } from '../models/user.schema'
 import { UserCredentials, NewUserEntry, ITokenPayload, ITokenData, NonSensitiveUserData } from '../types'
 import bcryptjs from 'bcryptjs'
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
 const REFRESH_JWT_SECRET_KEY: string | undefined = process.env.REFRESH_JWT_SECRET_KEY
 
@@ -97,12 +97,8 @@ export const refreshSession = async (oldRefreshToken: string): Promise<object | 
         }
 
         const newAccessToken = await generateToken(tokenPayload, true)
-        const decodedAccess = jwt.decode(newAccessToken) as JwtPayload
-        const accessExpiration = decodedAccess.exp
-
         return {
-          access: newAccessToken,
-          accessExpiration
+          access: newAccessToken
         }
       }
     }

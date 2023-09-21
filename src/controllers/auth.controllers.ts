@@ -4,7 +4,6 @@ import { Error } from '../enums'
 import { generateToken } from '../helpers/jwt'
 import { sendResponse } from '../utils/response.utils'
 import { TokenModel } from '../models/token.schema'
-import jwt, { JwtPayload } from 'jsonwebtoken'
 
 export const signUp = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -45,16 +44,13 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
     ) {
       const access = await generateToken(session, true)
       const refresh = await generateToken(session, false)
-      const decodedAccess = jwt.decode(access) as JwtPayload
-      const accessExpiration = decodedAccess.exp
 
       // Guardar refresh token en la base de datos
       await TokenModel.create({ token: refresh })
       res.status(200).send({
         status: 200,
         access,
-        refresh,
-        accessExpiration
+        refresh
       })
     }
   } catch (error) {
