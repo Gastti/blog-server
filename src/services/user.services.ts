@@ -24,7 +24,7 @@ export const getUser = async (userId: string): Promise<IUser | Error> => {
         { isDeleted: false }
       ]
     })
-      .select('-password -createdAt -updatedAt -_id -__v -isDeleted')
+      .select('-password -updatedAt -_id -__v -isDeleted')
 
     if (user !== null) return user
     else return Error.EMPTY_RESPONSE
