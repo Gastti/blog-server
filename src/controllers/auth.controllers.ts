@@ -28,13 +28,13 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
         message: 'Non-existent user.'
       })
     } else if (session === Error.WRONG_CREDENTIALS) {
-      res.status(404).send({
-        status: 404,
+      res.status(401).send({
+        status: 401,
         message: 'Email/Password incorrect.'
       })
     } else if (session === Error.BAD_REQUEST) {
-      res.status(404).send({
-        status: 404,
+      res.status(400).send({
+        status: 400,
         message: 'Bad request.'
       })
     } else if (
