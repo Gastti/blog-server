@@ -9,20 +9,20 @@ export const sendResponse = (
   IPost | IPost[]
 ): void => {
   if (response === Error.BAD_REQUEST) {
-    res.status(404).send({
-      status: 404,
+    res.status(400).send({
+      status: 400,
       message: 'Bad Request.',
       data: []
     })
   } else if (response === Error.EMPTY_RESPONSE) {
-    res.status(200).send({
-      status: 200,
+    res.status(204).send({
+      status: 204,
       message: 'Inexistent.',
       data: []
     })
   } else if (response === Error.EXISTING_RECORD) {
-    res.status(404).send({
-      status: 404,
+    res.status(409).send({
+      status: 409,
       message: 'Email/Username already registered.',
       data: []
     })
