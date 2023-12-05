@@ -33,33 +33,34 @@ export const getAllPosts = async (): Promise<IPost[] | Error> => {
 
 export const getPostsByQuery = async (queryParams: any): Promise<IPost[] | null | Error> => {
   try {
-    const tag: string = queryParams.tag ?? ''
     const title: string = queryParams.title ?? ''
 
     if (title !== null && title.length > 0) {
+      const postsImages: IPost[] = await PostModel.find({
+        $and: [
+          { title: { $regex: new RegExp(title, 'i') } },
+          { isDeleted: false }]
+      })
+        .select('title')
+        .populate({ path: 'image', select: 'expirationDate key' })
+
+      if (postsImages == null) return Error.BAD_REQUEST
+
+      for (const data of postsImages) {
+        const { image } = data
+        const isExpired = verifyExpirationDate(image.expirationDate)
+        if (isExpired) await handleExpiratedImage(image.key)
+      }
+
       const posts: IPost[] = await PostModel.find({
         $and: [
           { title: { $regex: new RegExp(title, 'i') } },
           { isDeleted: false }]
       })
-        .select('title content category tags url createdAt')
-        .populate({ path: 'author', select: 'username firstname lastname avatar role' })
-
-      if (posts === null) return Error.BAD_REQUEST
-
-      return posts
-    }
-
-    if (tag !== null && tag.length > 0) {
-      const lowerCasedTag = tag.toLowerCase()
-      const posts = await PostModel.find({
-        $and: [
-          { tags: { $in: [lowerCasedTag] } },
-          { isDeleted: false }
-        ]
-      })
-        .select('title content category tags url createdAt')
-        .populate({ path: 'author', select: 'username firstname lastname avatar role' })
+        .sort({ createdAt: -1 })
+        .select('title content image category tags url createdAt')
+        .populate({ path: 'author', select: '-_id username firstname lastname avatar role' })
+        .populate({ path: 'image', select: '-_id url' })
 
       if (posts === null) return Error.BAD_REQUEST
 
@@ -127,7 +128,12 @@ export const getPostByAuthor = async (username: string): Promise<IPost[] | Error
       if (isExpired) await handleExpiratedImage(image.key)
     }
 
-    const posts = await PostModel.find({ author: { $eq: user?._id } })
+    const posts = await PostModel.find({
+      $and: [
+        { author: { $eq: user?._id } },
+        { isDeleted: false }
+      ]
+    })
       .select('title content category tags url createdAt')
       .populate({ path: 'author', select: 'username firstname lastname avatar role' })
       .populate({ path: 'image', select: 'url' })
